@@ -332,21 +332,27 @@
 
   <script type="module">
     // Firebase Imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-    // TODO: Replace values with your actual Firebase config keys
-    const firebaseConfig = {
-      apiKey: "YOUR_FIREBASE_API_KEY",
-      authDomain: "friendship-30992.firebaseapp.com",
-      projectId: "friendship-30992",
-      storageBucket: "friendship-30992.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDzilZgV97f6efpgX_aRhXcH3tEHP-FGDM",
+  authDomain: "friendship-35992.firebaseapp.com",
+  projectId: "friendship-35992",
+  storageBucket: "friendship-35992.firebasestorage.app",
+  messagingSenderId: "367750639173",
+  appId: "1:367750639173:web:23541eccb436277c50fd2c",
+  measurementId: "G-6Q1N7TMBQ0"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     const questions = [
       "What was your first impression of me?",
