@@ -329,30 +329,25 @@
       <div id="endingContent"></div>
     </div>
   </div>
-
   <script type="module">
     // Firebase Imports
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDzilZgV97f6efpgX_aRhXcH3tEHP-FGDM",
-  authDomain: "friendship-35992.firebaseapp.com",
-  projectId: "friendship-35992",
-  storageBucket: "friendship-35992.firebasestorage.app",
-  messagingSenderId: "367750639173",
-  appId: "1:367750639173:web:23541eccb436277c50fd2c",
-  measurementId: "G-6Q1N7TMBQ0"
-};
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzilZgV97f6efpgX_aRhXcH3tEHP-FGDM",
+      authDomain: "friendship-35992.firebaseapp.com",
+      projectId: "friendship-35992",
+      storageBucket: "friendship-35992.firebasestorage.app",
+      messagingSenderId: "367750639173",
+      appId: "1:367750639173:web:23541eccb436277c50fd2c",
+      measurementId: "G-6Q1N7TMBQ0"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    // Initialize Firebase & Firestore Database
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const questions = [
       "What was your first impression of me?",
@@ -448,7 +443,7 @@ const analytics = getAnalytics(app);
           responses: userAnswers,
           submittedAt: serverTimestamp()
         });
-        console.log("Answers saved to Firebase!");
+        console.log("Answers successfully saved to Firebase!");
       } catch (e) {
         console.error("Error saving answers to Firebase: ", e);
       }
@@ -527,5 +522,5 @@ const analytics = getAnalytics(app);
       }, 250);
     }
   </script>
-</body>
-</html>
+  
+   
