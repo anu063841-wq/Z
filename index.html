@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Do You Really Know Me?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Sacramento&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-grad: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --text-color: #4a3e56;
+      --accent-color: #8a4fff;
+      --accent-hover: #7332eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-grad);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Animation Elements */
+    .bg-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: float 8s infinite ease-in-out;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .shape-1 { width: 150px; height: 150px; top: 10%; left: 10%; animation-delay: 0s; }
+    .shape-2 { width: 220px; height: 220px; bottom: 15%; right: 10%; animation-delay: 2s; }
+    .shape-3 { width: 100px; height: 100px; bottom: 30%; left: 20%; animation-delay: 4s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* Floating Canvas FX */
+    #fx-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Music Toggle */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 101;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      padding: 10px 15px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      transition: transform 0.2s ease;
+    }
+
+    .music-control:hover { transform: scale(1.05); }
+
+    /* App Container & Glassmorphism */
+    .container {
+      width: 90%;
+      max-width: 600px;
+      min-height: 480px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 35px 25px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.4);
+      height: 8px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-color);
+      transition: width 0.4s ease;
+    }
+
+    /* Page Views */
+    .page {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Interactive Elements */
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      color: #3d2c54;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      color: #3d2c54;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .script-font {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.5rem;
+      color: var(--accent-color);
+    }
+
+    textarea {
+      width: 100%;
+      height: 110px;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.7);
+      resize: none;
+      font-size: 1rem;
+      color: var(--text-color);
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    textarea:focus { border-color: var(--accent-color); }
+
+    .btn {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(138, 79, 255, 0.3);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(138, 79, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-color);
+      box-shadow: none;
+      border: 1px solid var(--glass-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Glowing Heart Element */
+    .glowing-heart {
+      font-size: 4rem;
+      color: #ff5e97;
+      animation: pulse 1.5s infinite alternate;
+      margin-bottom: 15px;
+      display: inline-block;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,94,151,0.4)); }
+      100% { transform: scale(1.15); filter: drop-shadow(0 0 20px rgba(255,94,151,0.8)); }
+    }
+
+    /* Summary Display */
+    .summary-list {
+      max-height: 250px;
+      overflow-y: auto;
+      text-align: left;
+      margin-bottom: 20px;
+      padding-right: 5px;
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .summary-q { font-weight: 600; color: var(--accent-color); }
+    .summary-a { color: var(--text-color); margin-top: 3px; }
+
+    /* Custom Scrollbar for Summary */
+    .summary-list::-webkit-scrollbar { width: 6px; }
+    .summary-list::-webkit-scrollbar-thumb { background: rgba(138, 79, 255, 0.3); border-radius: 10px; }
+
+    @media (max-width: 480px) {
+      .container { padding: 25px 18px; }
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.2rem; }
+      .script-font { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="fx-canvas"></canvas>
+
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+
+  <button class="music-control" id="musicBtn" onclick="toggleAudio()">
+    <span id="musicIcon">🎵</span> <span id="musicText">Play Music</span>
+  </button>
+
+  <audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+
+  <div class="container">
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Page 1: Welcome -->
+    <div class="page active" id="page1">
+      <h1>Hey Bestie! 💜</h1>
+      <p>This isn't just a website...</p>
+      <p>It's a little journey to see how well you know me and what I truly mean to you.</p>
+      <p><i>Answer honestly. No right or wrong answers.</i></p>
+      <p class="script-font">Ready?</p>
+      <button class="btn" onclick="startJourney()">✨ Start the Journey</button>
+    </div>
+
+    <!-- Page 2 & 3: Interactive Questions View -->
+    <div class="page" id="quizPage">
+      <h2 id="questionText">Question goes here...</h2>
+      <textarea id="answerInput" placeholder="Type your honest answer here..."></textarea>
+      <div>
+        <button class="btn" id="nextBtn" onclick="submitAnswer()">Next 💜</button>
+      </div>
+    </div>
+
+    <!-- Memories Page (Saved Answers Summary) -->
+    <div class="page" id="memoriesPage">
+      <h2>Our Shared Answers 📖</h2>
+      <p>Here is what you've shared along this journey:</p>
+      <div class="summary-list" id="summaryList"></div>
+      <button class="btn" onclick="goToFinalQuestion()">Continue to Final Question ✨</button>
+    </div>
+
+    <!-- Page 4: The Final Question -->
+    <div class="page" id="finalPage">
+      <div class="glowing-heart">💜</div>
+      <p style="font-weight: 600; margin-bottom: 5px;">One last question...</p>
+      <h2 style="margin-bottom: 25px;">Will you always stay by my side no matter what?</h2>
+      <div>
+        <button class="btn" onclick="handleFinalChoice(true)">💜 Always</button>
+        <button class="btn btn-secondary" onclick="handleFinalChoice(false)">💔 I Can't Promise</button>
+      </div>
+    </div>
+
+    <!-- Page 5: Ending Screen -->
+    <div class="page" id="endingPage">
+      <div id="endingContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      // Page 2 Questions
+      "What was your first impression of me?",
+      "What do you love the most about me?",
+      "What is one thing that reminds you of me?",
+      "What's your favorite memory with me?",
+      "When do you miss me the most?",
+      "Have I ever made your life better? How?",
+      "What's one thing you've never told me?",
+      "What's my biggest strength?",
+      "What's my biggest weakness?",
+      "If we stopped talking one day, would it affect you? Why?",
+      // Page 3 Questions
+      "❤️ Am I really important in your life?",
+      "❤️ Do you trust me completely?",
+      "❤️ Do you think our friendship will last forever?",
+      "❤️ Have I ever hurt you without knowing?",
+      "❤️ Do you feel safe sharing your secrets with me?",
+      "❤️ What do I mean to you in one sentence?",
+      "❤️ If you could describe me in three words, what would they be?",
+      "❤️ What is one promise you want to make to me?"
+    ];
+
+    let currentQuestionIndex = 0;
+    const userAnswers = [];
+    const audio = document.getElementById("bgMusic");
+    const musicBtn = document.getElementById("musicBtn");
+
+    function toggleAudio() {
+      if (audio.paused) {
+        audio.play().then(() => {
+          document.getElementById("musicIcon").innerText = "⏸️";
+          document.getElementById("musicText").innerText = "Pause Music";
+        }).catch(e => console.log("Audio play blocked: ", e));
+      } else {
+        audio.pause();
+        document.getElementById("musicIcon").innerText = "🎵";
+        document.getElementById("musicText").innerText = "Play Music";
+      }
+    }
+
+    function startJourney() {
+      // Attempt audio auto-play on first user click
+      if (audio.paused) { toggleAudio(); }
+      
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("quizPage").classList.add("active");
+      document.getElementById("progressContainer").style.display = "block";
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const qText = questions[currentQuestionIndex];
+      document.getElementById("questionText").innerText = qText;
+      document.getElementById("answerInput").value = "";
+      
+      const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+      document.getElementById("progressBar").style.width = progressPercent + "%";
+    }
+
+    function submitAnswer() {
+      const inputVal = document.getElementById("answerInput").value.trim();
+      const currentQ = questions[currentQuestionIndex];
+
+      userAnswers.push({
+        question: currentQ,
+        answer: inputVal || "(No answer provided)"
+      });
+
+      // Save locally
+      localStorage.setItem("bestie_quiz_answers", JSON.stringify(userAnswers));
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < questions.length) {
+        // Re-trigger animation
+        const quizPage = document.getElementById("quizPage");
+        quizPage.classList.remove("active");
+        void quizPage.offsetWidth; 
+        quizPage.classList.add("active");
+        renderQuestion();
+      } else {
+        showMemoriesPage();
+      }
+    }
+
+    function showMemoriesPage() {
+      document.getElementById("quizPage").classList.remove("active");
+      document.getElementById("progressContainer").style.display = "none";
+      document.getElementById("memoriesPage").classList.add("active");
+
+      const summaryList = document.getElementById("summaryList");
+      summaryList.innerHTML = "";
+
+      userAnswers.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "summary-item";
+        div.innerHTML = `<div class="summary-q">${item.question}</div><div class="summary-a">${item.answer}</div>`;
+        summaryList.appendChild(div);
+      });
+    }
+
+    function goToFinalQuestion() {
+      document.getElementById("memoriesPage").classList.remove("active");
+      document.getElementById("finalPage").classList.add("active");
+    }
+
+    function handleFinalChoice(isAlways) {
+      document.getElementById("finalPage").classList.remove("active");
+      const endingPage = document.getElementById("endingPage");
+      const endingContent = document.getElementById("endingContent");
+      endingPage.classList.add("active");
+
+      if (isAlways) {
+        endingContent.innerHTML = `
+          <div class="glowing-heart">✨💜✨</div>
+          <h2>Forever & Always</h2>
+          <p>Thank you for being one of the most beautiful parts of my life.</p>
+          <p>No matter where life takes us, you'll always have a special place in my heart.</p>
+          <p class="script-font">Our friendship means more than words can ever express. 💜</p>
+        `;
+        triggerFireworks();
+      } else {
+        endingContent.innerHTML = `
+          <div style="font-size: 3.5rem; margin-bottom: 15px;">🩹</div>
+          <h2>Thank You For Being Honest</h2>
+          <p>That's okay.</p>
+          <p>Thank you for being honest.</p>
+          <p class="script-font">I'll always cherish every memory we've made together. 🌸</p>
+        `;
+      }
+    }
+
+    /* Explosive Confetti / Fireworks Effect */
+    function triggerFireworks() {
+      const duration = 4 * 1000;
+      const animationEnd = Date.now() + duration;
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+          particleCount,
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          origin: { x: Math.random(), y: Math.random() - 0.2 },
+          colors: ['#e0c3fc', '#8ec5fc', '#8a4fff', '#ff5e97', '#ffffff']
+        });
+      }, 250);
+    }
+  </script>
+</body>
+  </html>
+  
